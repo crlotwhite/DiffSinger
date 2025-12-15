@@ -16,3 +16,6 @@ infer_out/
 
 .vscode
 .ipynb_checkpoints/
+
+binary_aco/
+binary_var/
