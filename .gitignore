@@ -12,6 +12,7 @@ infer_out/
 /checkpoints/*
 !/checkpoints/.gitkeep
 /venv/
+/.venv/
 /artifacts/
 
 .vscode
@@ -19,3 +20,4 @@ infer_out/
 
 binary_aco/
 binary_var/
+*_simokim*

@@ -6,13 +6,46 @@
 
 DiffSinger requires Python 3.8 or later. We strongly recommend you create a virtual environment via Conda or venv before installing dependencies.
 
+This repository also supports managing dependencies via **uv** (https://github.com/astral-sh/uv). Using uv is optional; `pip install -r requirements.txt` still works.
+
 1. Install The latest PyTorch following the [official instructions](https://pytorch.org/get-started/locally/) according to your OS and hardware.
 
-2. Install other dependencies via the following command:
+   If you prefer to install PyTorch using uv, you can use the `uv pip` interface. For example:
+
+   ```bash
+   uv pip install torch --torch-backend=auto
+   ```
+
+   See: https://docs.astral.sh/uv/guides/integration/pytorch/
+
+2. Install other dependencies.
+
+   **Option A (uv, recommended):**
+
+   - For training / inference (recommended): install with the `train` extra.
+   - For ONNX export: use the `onnx-export` extra in a separate environment (it requires PyTorch 1.13.x).
+
+   ```bash
+   # CPU-only
+   uv sync --extra train --extra cpu
+
+   # CUDA 12.8 (Linux/Windows)
+   uv sync --extra train --extra cu128
+   ```
+
+   **Option B (pip):**
 
    ```bash
    pip install -r requirements.txt
    ```
+
+If you installed dependencies with uv, you can run the commands in the managed environment via `uv run`, for example:
+
+```bash
+uv run python scripts/train.py --config my_config.yaml --exp_name my_experiment --reset
+uv run python scripts/binarize.py --config my_config.yaml
+uv run tensorboard --logdir checkpoints/
+```
 
 ### Concepts and materials
 

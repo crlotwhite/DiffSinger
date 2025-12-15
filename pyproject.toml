@@ -1,0 +1,93 @@
+[project]
+name = "diffsinger"
+version = "2.5.0"
+description = "DiffSinger (OpenVPI maintained fork)"
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.8"
+
+# NOTE:
+# - We don't pin a single global PyTorch build in base dependencies.
+# - Use extras to select either the training/inference stack or the ONNX export stack.
+# - If you want uv to control which PyTorch wheel index is used (CPU vs CUDA), enable the matching extra.
+dependencies = [
+  "click",
+  "einops>=0.7.0",
+  "h5py",
+  "librosa<0.10.0",
+  "matplotlib",
+  "MonkeyType==23.3.0",
+  "numpy<2.0.0",
+  "praat-parselmouth==0.4.3",
+  "pyworld==0.3.4",
+  "PyYAML",
+  "resampy",
+  "scipy>=1.10.0",
+  "tensorboard",
+  "tensorboardX",
+  "torchmetrics",
+  "tqdm",
+]
+
+[project.optional-dependencies]
+# Main training / inference stack (recommended).
+train = [
+  "lightning~=2.3.0",
+]
+
+# Select a PyTorch build for your environment.
+# - cpu: CPU-only builds (all platforms)
+# - cu128: CUDA 12.8 builds (Linux/Windows only)
+cpu = [
+  "torch",
+]
+cu128 = [
+  "torch",
+]
+
+# ONNX export stack (requires PyTorch 1.13.x). Use a separate environment.
+onnx-export = [
+  "torch==1.13.1",
+  "torchvision==0.14.1",
+  "torchaudio==0.13.1",
+  "lightning~=2.1.0",
+  "onnx~=1.16.0",
+  "onnxsim~=0.4.36",
+]
+
+[tool.uv]
+# These extras are mutually exclusive (torch/lightning compatibility).
+conflicts = [
+  [
+    { extra = "train" },
+    { extra = "onnx-export" },
+  ],
+  [
+    { extra = "cpu" },
+    { extra = "cu128" },
+  ],
+  [
+    { extra = "onnx-export" },
+    { extra = "cpu" },
+  ],
+  [
+    { extra = "onnx-export" },
+    { extra = "cu128" },
+  ],
+]
+
+[tool.uv.sources]
+torch = [
+  { index = "pytorch-cpu", extra = "cpu" },
+  { index = "pytorch-cu128", extra = "cu128" },
+]
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
+
+[[tool.uv.index]]
+name = "pytorch-cu128"
+url = "https://download.pytorch.org/whl/cu128"
+explicit = true
